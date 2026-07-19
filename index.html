@@ -415,7 +415,7 @@ var PRODS=[
 /* ============================================================
    FASE 1 — RANKING AUTOMÁTICO (motor + conexión a Google Sheets)
    ============================================================ */
-var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjbfD5IDv7NTEC3Z9wsTahAonAz5ieAqp0AWpt98COqIglW_evEjye96IxQFPp0fU1Rw/exec"; // reemplazar tras desplegar
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykPxhD0rDupUhAoxjS85GRqXISz56VwsmVGeC_dJLXC1SxpLSLa0J4bBZR_Y42LHNDFA/exec"; // reemplazar tras desplegar
 
 var PUNTOS = {gana2sets:300,gana3sets:200,pierde3sets:50,pierde2sets:25,ganaWO:300,pierdeWO:0,bonoTodosGanados:500,bonoTodosJugados:150,bonoBagelBagel:100};
 
@@ -501,7 +501,7 @@ function transformLiveData(json){
 
   // Titulos: hoja opcional "Titulos" con columnas Jugador | Serie | Temporada
   DATA.titulos=(json.titulos||[]).map(function(t){
-    return {nombre:t.jugador||t.nombre,serie:t.serie,temporada:t.temporada};
+    return {nombre:t.jugador||t.nombre,serie:t.serie,temporada:t.temporada,periodo:t.periodo||''};
   });
 }
 
@@ -651,7 +651,12 @@ function filterPS(val){
 
 function getTitulos(nombre){
   var t=(DATA.titulos||[]).filter(function(x){return x.nombre===nombre;});
-  t.sort(function(a,b){return (b.temporada||0)-(a.temporada||0);});
+  var pOrd={"Clausura":1,"Apertura":0};
+  t.sort(function(a,b){
+    var ta=a.temporada||0,tb=b.temporada||0;
+    if(tb!==ta)return tb-ta;
+    return (pOrd[b.periodo]||0)-(pOrd[a.periodo]||0);
+  });
   return t;
 }
 
@@ -710,7 +715,7 @@ function showProfile(nombre,scroll){
   if(tits.length){
     var chips="";
     for(var ti=0;ti<tits.length;ti++){
-      chips+="<span class=\"tch\"><span class=\"tchi\">\ud83c\udfc6</span><span class=\"tchn\">Serie "+tits[ti].serie+"</span><span class=\"tchy\">"+tits[ti].temporada+"</span></span>";
+      chips+="<span class=\"tch\"><span class=\"tchi\">\ud83c\udfc6</span><span class=\"tchn\">Serie "+tits[ti].serie+"</span><span class=\"tchy\">"+(tits[ti].periodo?tits[ti].periodo+" ":"")+tits[ti].temporada+"</span></span>";
     }
     titH="<div class=\"tbg\"><div class=\"rmt\">Titulos obtenidos</div><div class=\"tbl\">"+chips+"</div></div>";
   }
