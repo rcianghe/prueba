@@ -149,6 +149,11 @@ section{padding:4rem 1.5rem}
 .h2hdl{font-family:'Barlow Condensed',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gl);display:block;margin-bottom:.25rem}
 .h2hrc{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--bl);letter-spacing:3px}
 .h2hm{padding:.9rem 1.1rem}
+.h2hstats{background:var(--gd)}
+.h2hstat{display:flex;align-items:center;padding:.8rem 1.4rem;border-top:1px solid rgba(255,255,255,.06)}
+.h2hstatv{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gl);flex:1;text-align:center;letter-spacing:1px}
+.h2hstatv.win{color:var(--v)}
+.h2hstatl{color:var(--gl);font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;width:150px;flex-shrink:0;text-align:center;display:flex;align-items:center;justify-content:center;gap:.35rem}
 .h2hmr{display:flex;align-items:center;gap:.7rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem}
 .h2hwi{font-family:'Bebas Neue',sans-serif;font-size:.82rem;width:55px}
 .h2hms{flex:1;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:600}
@@ -244,6 +249,8 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
   .pst{grid-template-columns:repeat(2,1fr)}
   .phero{flex-direction:column;text-align:center}
   .h2hs{flex-direction:column}.h2hsel{min-width:unset;width:100%}
+  .h2hstatl{width:110px;font-size:.58rem}
+  .h2hstatv{font-size:1.6rem}
   .mg{grid-template-columns:1fr}
   .gg{grid-template-columns:repeat(2,1fr)}
   .rt th,.rt td{padding:.55rem .65rem;font-size:.8rem}
@@ -523,7 +530,7 @@ function loadLiveData(){
 
 // Refresco automatico: reconsulta Google Sheets cada 90s mientras la pestana este visible,
 // asi los cambios de resultados se reflejan solos sin necesidad de recargar (F5).
-var LIVE_REFRESH_MS=30000;
+var LIVE_REFRESH_MS=90000;
 function startLiveRefresh(){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return;
   setInterval(function(){
@@ -762,6 +769,20 @@ function populateH2H(){
   document.getElementById("h2").innerHTML=o;
 }
 
+function rankEnSerie(nombre){
+  var jugador=null;
+  for(var i=0;i<DATA.players.length;i++){if(DATA.players[i].nombre===nombre){jugador=DATA.players[i];break;}}
+  if(!jugador)return '-';
+  var mismos=DATA.players.filter(function(p){return p.serie===jugador.serie;});
+  mismos.sort(function(a,b){return b.pts-a.pts;});
+  for(var i=0;i<mismos.length;i++){if(mismos[i].nombre===nombre)return i+1;}
+  return '-';
+}
+function contarTitulos(nombre){
+  var c=0;
+  for(var i=0;i<DATA.titulos.length;i++){if(DATA.titulos[i].nombre===nombre)c++;}
+  return c;
+}
 function calcH2H(){
   var p1=document.getElementById("h1").value,p2=document.getElementById("h2").value;
   var con=document.getElementById("hr");
@@ -778,6 +799,8 @@ function calcH2H(){
     if(DATA.players[i].nombre===p1)s1=DATA.players[i].serie;
     if(DATA.players[i].nombre===p2)s2=DATA.players[i].serie;
   }
+  var mr1=rankEnSerie(p1),mr2=rankEnSerie(p2);
+  var tit1=contarTitulos(p1),tit2=contarTitulos(p2);
   var rH="";
   for(var i=0;i<ml.length;i++){
     var r=ml[i],lw=r.ganador===p1;
@@ -788,7 +811,12 @@ function calcH2H(){
     +"<div class=\"h2hp\"><div class=\"h2hpn\">"+p1+"</div><span class=\"sb "+s1+"\" style=\"font-size:.62rem;\">Serie "+s1+"</span><div class=\"h2hw "+(w1>=w2?"win":"lose")+"\">"+w1+"</div></div>"
     +"<div class=\"h2hdiv\"><span class=\"h2hdl\">Historial</span><div class=\"h2hrc\">"+ml.length+" partidos</div></div>"
     +"<div class=\"h2hp\"><div class=\"h2hpn\">"+p2+"</div><span class=\"sb "+s2+"\" style=\"font-size:.62rem;\">Serie "+s2+"</span><div class=\"h2hw "+(w2>=w1?"win":"lose")+"\">"+w2+"</div></div>"
-    +"</div><div class=\"h2hm\"><div class=\"rmt\">Partidos jugados</div>"+rH+"</div></div>";
+    +"</div>"
+    +"<div class=\"h2hstats\">"
+    +"<div class=\"h2hstat\"><span class=\"h2hstatv "+(typeof mr1==='number'&&(typeof mr2!=='number'||mr1<mr2)?"win":"")+"\">"+mr1+"</span><span class=\"h2hstatl\">🏅 Mejor Ranking</span><span class=\"h2hstatv "+(typeof mr2==='number'&&(typeof mr1!=='number'||mr2<mr1)?"win":"")+"\">"+mr2+"</span></div>"
+    +"<div class=\"h2hstat\"><span class=\"h2hstatv "+(tit1>tit2?"win":"")+"\">"+tit1+"</span><span class=\"h2hstatl\">🏆 Titulos Obtenidos</span><span class=\"h2hstatv "+(tit2>tit1?"win":"")+"\">"+tit2+"</span></div>"
+    +"</div>"
+    +"<div class=\"h2hm\"><div class=\"rmt\">Partidos jugados</div>"+rH+"</div></div>";
 }
 
 function filterStore(v,el){
