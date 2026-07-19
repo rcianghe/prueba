@@ -510,7 +510,7 @@ function loadLiveData(){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return; // sin desplegar aun, se usan datos estaticos
   if(liveRefreshBusy)return; // evita refrescos superpuestos si el anterior no termino
   liveRefreshBusy=true;
-  fetch(APPS_SCRIPT_URL).then(function(res){return res.json();}).then(function(json){
+  fetch(APPS_SCRIPT_URL+(APPS_SCRIPT_URL.indexOf('?')===-1?'?':'&')+'_t='+Date.now(),{cache:'no-store'}).then(function(res){return res.json();}).then(function(json){
     transformLiveData(json);
     rAll();
     console.log('Datos en vivo cargados desde Google Sheets:',json.actualizado);
