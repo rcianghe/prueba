@@ -415,7 +415,7 @@ var PRODS=[
 /* ============================================================
    FASE 1 — RANKING AUTOMÁTICO (motor + conexión a Google Sheets)
    ============================================================ */
-var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykPxhD0rDupUhAoxjS85GRqXISz56VwsmVGeC_dJLXC1SxpLSLa0J4bBZR_Y42LHNDFA/exec"; // reemplazar tras desplegar
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0aHhi62RtHPNczcJ1UhMgiS0FDhw5Jw2b4BW9C3TKVKJlu9me1wnpdI-zz1luhf3c/exec"; // reemplazar tras desplegar
 
 var PUNTOS = {gana2sets:300,gana3sets:200,pierde3sets:50,pierde2sets:25,ganaWO:300,pierdeWO:0,bonoTodosGanados:500,bonoTodosJugados:150,bonoBagelBagel:100};
 
@@ -505,14 +505,32 @@ function transformLiveData(json){
   });
 }
 
+var liveRefreshBusy=false;
 function loadLiveData(){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return; // sin desplegar aun, se usan datos estaticos
+  if(liveRefreshBusy)return; // evita refrescos superpuestos si el anterior no termino
+  liveRefreshBusy=true;
   fetch(APPS_SCRIPT_URL).then(function(res){return res.json();}).then(function(json){
     transformLiveData(json);
     rAll();
     console.log('Datos en vivo cargados desde Google Sheets:',json.actualizado);
   }).catch(function(err){
     console.warn('No se pudo cargar datos en vivo, usando datos estaticos embebidos.',err);
+  }).then(function(){
+    liveRefreshBusy=false;
+  });
+}
+
+// Refresco automatico: reconsulta Google Sheets cada 90s mientras la pestana este visible,
+// asi los cambios de resultados se reflejan solos sin necesidad de recargar (F5).
+var LIVE_REFRESH_MS=90000;
+function startLiveRefresh(){
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return;
+  setInterval(function(){
+    if(document.visibilityState==='visible')loadLiveData();
+  },LIVE_REFRESH_MS);
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')loadLiveData(); // refresca al volver a la pestana
   });
 }
 
@@ -526,6 +544,7 @@ function init(){
   rAll();
   window.scrollTo(0,0);
   loadLiveData();
+  startLiveRefresh();
 }
 
 function rHeroStats(){
