@@ -523,7 +523,7 @@ function loadLiveData(){
 
 // Refresco automatico: reconsulta Google Sheets cada 90s mientras la pestana este visible,
 // asi los cambios de resultados se reflejan solos sin necesidad de recargar (F5).
-var LIVE_REFRESH_MS=90000;
+var LIVE_REFRESH_MS=30000;
 function startLiveRefresh(){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return;
   setInterval(function(){
