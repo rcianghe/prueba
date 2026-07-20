@@ -13,7 +13,7 @@ body{font-family:'Barlow',sans-serif;background:var(--ng);color:var(--bl);overfl
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--v);border-radius:2px}
 header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(14,14,14,0.97);border-bottom:2px solid var(--v);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:58px}
 .lw{display:flex;align-items:center;gap:10px}
-.lc{width:38px;height:38px;border-radius:50%;background:var(--v);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:11px;color:var(--ng);letter-spacing:1px;box-shadow:0 0 0 2px var(--am);flex-shrink:0}
+.lc{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#fff;box-shadow:0 0 0 2px var(--am);flex-shrink:0}
 .lt{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:2px;line-height:1.1;color:var(--bl)}
 .lt span{color:var(--v)}
 nav a{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gl);text-decoration:none;padding:0 .7rem;height:58px;display:inline-flex;align-items:center;border-bottom:3px solid transparent;transition:all .2s}
@@ -42,13 +42,16 @@ section{padding:4rem 1.5rem}
 .hsn{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--v);line-height:1}
 .hsl{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gl);margin-top:2px}
 .hcta{display:flex;gap:.9rem;justify-content:center;margin-top:2.2rem;flex-wrap:wrap}
-.hjm{display:none;align-items:center;gap:.6rem;justify-content:center;margin-top:1.6rem;padding:.55rem 1.2rem;border:1px solid rgba(212,230,10,.35);border-radius:100px;background:rgba(212,230,10,.06)}
-.hjm.show{display:inline-flex}
-.hjmi{font-size:1.05rem}
-.hjmt{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gl)}
-.hjmn{font-weight:700;color:var(--am);margin-left:.3rem;cursor:pointer}
-.hjmd{font-size:.7rem;color:var(--v);margin-left:.4rem;font-weight:600}
-@media(max-width:520px){.hjm{padding:.5rem 1rem;gap:.4rem}.hjmt{font-size:.6rem}.hjmd{font-size:.64rem}}
+.mprevia{margin-top:.7rem;padding:.65rem .85rem;background:rgba(212,230,10,.05);border-left:2px solid var(--am);border-radius:0 6px 6px 0;font-size:.76rem;line-height:1.45;color:var(--bl);font-style:italic}
+.mprevia b{font-style:normal;color:var(--am);font-weight:700}
+.hjm{display:none;flex-direction:column;align-items:center;gap:.35rem;margin:1.8rem auto 0;padding:.9rem 1.6rem;border:1px solid rgba(212,230,10,.35);border-radius:14px;background:rgba(212,230,10,.06);max-width:380px}
+.hjm.show{display:flex}
+.hjmtop{display:flex;align-items:center;gap:.4rem}
+.hjmi{font-size:1rem;line-height:1}
+.hjmt{font-family:'Barlow Condensed',sans-serif;font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gl)}
+.hjmn{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.5px;color:var(--am);line-height:1.1;cursor:pointer;text-align:center}
+.hjmd{font-size:.68rem;letter-spacing:.5px;color:var(--v);font-weight:600}
+@media(max-width:520px){.hjm{max-width:88%;padding:.8rem 1.2rem}.hjmn{font-size:1.3rem}.hjmt{font-size:.56rem;letter-spacing:1.5px}.hjmd{font-size:.62rem}}
 .bp{background:var(--v);color:var(--ng);font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:.75rem 1.7rem;border:none;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
 .bp:hover{background:var(--vl);transform:translateY(-2px)}
 .bo{border:1px solid rgba(245,245,240,.3);color:var(--bl);background:transparent;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:.75rem 1.7rem;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
@@ -267,7 +270,7 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
 <body>
 <header>
   <div class="lw">
-    <div class="lc">CTQ</div>
+    <img class="lc" src="logo-club-tenis-estadio-quilicura.jpg" alt="Logo del Club de Tenis Estadio Quilicura">
     <div class="lt">CLUB DE TENIS<br><span>ESTADIO QUILICURA</span></div>
   </div>
   <nav>
@@ -294,7 +297,9 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
       <div><div class="hsn" id="sr">148</div><div class="hsl">Jugados</div></div>
     </div>
     <div class="hjm" id="hjm" onclick="showProfile(document.getElementById('hjm').dataset.nombre,true)">
-      <span class="hjmi">🔥</span><span class="hjmt">Jugador del Mes<span class="hjmn" id="hjmNombre"></span></span><span class="hjmd" id="hjmDelta"></span>
+      <span class="hjmtop"><span class="hjmi">🔥</span><span class="hjmt">Jugador del Mes</span></span>
+      <span class="hjmn" id="hjmNombre"></span>
+      <span class="hjmd" id="hjmDelta"></span>
     </div>
     <div class="hcta">
       <a href="#ranking" class="bp">Ver Ranking</a>
@@ -711,6 +716,9 @@ function rMatches(){
     h+="<div class=\"mc\">";
     h+="<div class=\"mh\"><span class=\"md\">"+m.fecha+(m.hora&&m.hora!="nan"?" "+m.hora:"")+"</span><span class=\"ms s"+m.status+"\">"+sL[m.status]+"</span></div>";
     h+="<div class=\"mb\"><div class=\"mp\"><div class=\"mpl\">"+p1H+"</div><div class=\"mv\">VS</div><div class=\"mpl\" style=\"text-align:right\">"+p2H+"</div></div>"+sH+"</div>";
+    if(m.status==='pending'&&m.p1&&m.p2){
+      h+="<div class=\"mprevia\">"+generarPrevia(m.p1,m.p2,m.serie)+"</div>";
+    }
     h+="<div class=\"mf\"><span class=\"mst\">Serie "+m.serie+"</span><span class=\"mr\">2026</span></div></div>";
   }
   grid.innerHTML=h||"<p style=\"color:var(--gl);text-align:center;grid-column:1/-1;padding:2rem\">Sin partidos.</p>";
@@ -853,6 +861,67 @@ function contarTitulos(nombre){
   var c=0;
   for(var i=0;i<DATA.titulos.length;i++){if(DATA.titulos[i].nombre===nombre)c++;}
   return c;
+}
+// Genera una previa automatica estilo prensa deportiva combinando
+// posicion en el ranking de Serie + historial H2H entre los dos jugadores.
+function h2hRecord(p1,p2){
+  var w1=0,w2=0;
+  for(var i=0;i<DATA.results.length;i++){
+    var r=DATA.results[i];
+    if(r.ganador===p1&&r.perdedor===p2)w1++;
+    else if(r.ganador===p2&&r.perdedor===p1)w2++;
+  }
+  return {w1:w1,w2:w2,total:w1+w2};
+}
+// Hash simple y determinístico (mismo partido = misma frase siempre,
+// pero varía entre partidos distintos). Evita el efecto "motor de reglas".
+function hashStr(s){
+  var h=0;
+  for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}
+  return Math.abs(h);
+}
+function pick(arr,seed){return arr[seed%arr.length];}
+
+function generarPrevia(p1,p2,serie){
+  var rk1=rankEnSerie(p1),rk2=rankEnSerie(p2);
+  var n1=typeof rk1==='number'?rk1:null,n2=typeof rk2==='number'?rk2:null;
+  var h=h2hRecord(p1,p2);
+  var seed=hashStr(p1+'|'+p2+'|'+serie);
+  var frase;
+
+  var VS_LIDER_ESCOLTA=["se enfrenta a su escolta","recibe a su perseguidor directo","choca con el segundo de la tabla","define el liderato ante quien lo persigue"];
+  var VS_LIDER_OTRO=["recibe a","enfrenta a","choca con","mide fuerzas con"];
+  var INTRO_GENERICO=["Cruce directo en la Serie","Duelo de la Serie","Choque de la Serie","Partido clave en la Serie"];
+  var FAVOR_H2H=["con un H2H de","con historial de","con antecedentes de","con marca de"];
+  var SIN_HIST=["sin antecedentes previos entre ambos","primer cruce entre los dos en la temporada","sin cruces registrados hasta ahora"];
+
+  if(n1&&n2&&((n1===1&&n2===2)||(n2===1&&n1===2))){
+    var lider=n1===1?p1:p2;
+    frase="Duelo de estilos: el lider de la Serie "+serie+" "+pick(VS_LIDER_ESCOLTA,seed);
+    if(h.total>0){
+      var wl=lider===p1?h.w1:h.w2,we=lider===p1?h.w2:h.w1;
+      frase+=", "+pick(FAVOR_H2H,seed)+" "+wl+"-"+we+(wl>=we?" a favor del primero":" a favor del segundo");
+    }else{
+      frase+=", "+pick(SIN_HIST,seed);
+    }
+    frase+=".";
+  }else if(n1===1||n2===1){
+    var rival2=n1===1?p2:p1,rkRival=n1===1?rk2:rk1;
+    frase="El lider de la Serie "+serie+" "+pick(VS_LIDER_OTRO,seed)+" "+rival2+" (puesto "+rkRival+")";
+    frase+=h.total>0?", con "+h.total+" antecedente"+(h.total>1?"s":"")+" entre ambos.":", "+pick(SIN_HIST,seed)+".";
+  }else if(n1&&n2){
+    frase=pick(INTRO_GENERICO,seed)+" "+serie+": puesto "+n1+" vs puesto "+n2;
+    if(h.total>0){
+      var fav=h.w1>=h.w2?p1:p2,wf=Math.max(h.w1,h.w2),wc=Math.min(h.w1,h.w2);
+      frase+=", "+pick(FAVOR_H2H,seed)+" "+wf+"-"+wc+" a favor de "+fav+".";
+    }else{
+      frase+=", "+pick(SIN_HIST,seed)+".";
+    }
+  }else{
+    frase=h.total>0?"Ya se han enfrentado "+h.total+" vez"+(h.total>1?"es":"")+" en la temporada.":pick(SIN_HIST,seed)+"."; 
+    frase=frase.charAt(0).toUpperCase()+frase.slice(1);
+  }
+  return frase;
 }
 function calcH2H(){
   var p1=document.getElementById("h1").value,p2=document.getElementById("h2").value;
