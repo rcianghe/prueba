@@ -42,6 +42,13 @@ section{padding:4rem 1.5rem}
 .hsn{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--v);line-height:1}
 .hsl{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gl);margin-top:2px}
 .hcta{display:flex;gap:.9rem;justify-content:center;margin-top:2.2rem;flex-wrap:wrap}
+.hjm{display:none;align-items:center;gap:.6rem;justify-content:center;margin-top:1.6rem;padding:.55rem 1.2rem;border:1px solid rgba(212,230,10,.35);border-radius:100px;background:rgba(212,230,10,.06)}
+.hjm.show{display:inline-flex}
+.hjmi{font-size:1.05rem}
+.hjmt{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gl)}
+.hjmn{font-weight:700;color:var(--am);margin-left:.3rem;cursor:pointer}
+.hjmd{font-size:.7rem;color:var(--v);margin-left:.4rem;font-weight:600}
+@media(max-width:520px){.hjm{padding:.5rem 1rem;gap:.4rem}.hjmt{font-size:.6rem}.hjmd{font-size:.64rem}}
 .bp{background:var(--v);color:var(--ng);font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:.75rem 1.7rem;border:none;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
 .bp:hover{background:var(--vl);transform:translateY(-2px)}
 .bo{border:1px solid rgba(245,245,240,.3);color:var(--bl);background:transparent;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:.75rem 1.7rem;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
@@ -286,6 +293,9 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
       <div><div class="hsn" id="ss">3</div><div class="hsl">Series</div></div>
       <div><div class="hsn" id="sr">148</div><div class="hsl">Jugados</div></div>
     </div>
+    <div class="hjm" id="hjm" onclick="showProfile(document.getElementById('hjm').dataset.nombre,true)">
+      <span class="hjmi">🔥</span><span class="hjmt">Jugador del Mes<span class="hjmn" id="hjmNombre"></span></span><span class="hjmd" id="hjmDelta"></span>
+    </div>
     <div class="hcta">
       <a href="#ranking" class="bp">Ver Ranking</a>
       <a href="#partidos" class="bo">Proximos Partidos</a>
@@ -481,6 +491,66 @@ function calcularRanking(jugadores,resultados,fixtureSize){
   return salida;
 }
 
+// Calcula puntos base (sin bonos, que requieren data que no viaja en DATA.results)
+// para un jugador usando solo los partidos hasta (e incluyendo) fechaCorte.
+function _ptsHasta(nombre,partidosSerie,fechaCorte){
+  var pts=0;
+  partidosSerie.forEach(function(r){
+    if(parseFechaDDMMYYYY(r.fecha)>fechaCorte)return;
+    var esWO=r.score==='W.O.';
+    var gane=r.ganador===nombre,pierde=r.perdedor===nombre;
+    if(!gane&&!pierde)return;
+    var sets=esWO?0:r.score.split(' ').length;
+    if(gane)pts+=esWO?PUNTOS.ganaWO:(sets===2?PUNTOS.gana2sets:PUNTOS.gana3sets);
+    else pts+=esWO?PUNTOS.pierdeWO:(sets===2?PUNTOS.pierde2sets:PUNTOS.pierde3sets);
+  });
+  return pts;
+}
+
+// "Jugador del Mes": compara el puesto de cada jugador activo en su Serie
+// hace 30 dias vs hoy (usando solo puntaje base, sin bonos), y destaca al
+// que mas puestos escalo. Se recalcula con los datos ya cargados en DATA,
+// asi que funciona tanto con la data estatica como con la que llega de
+// Google Sheets via transformLiveData.
+function calcularJugadorDelMes(){
+  var HOY=Date.now();
+  var CORTE=HOY-30*24*60*60*1000;
+  var porSerie={A:[],B:[],C:[]};
+  DATA.players.forEach(function(p){if(porSerie[p.serie]&&!p.retirado)porSerie[p.serie].push(p);});
+  var mejor=null;
+  ['A','B','C'].forEach(function(serie){
+    var jug=porSerie[serie];
+    if(jug.length<2)return;
+    var partidosSerie=DATA.results.filter(function(r){return r.serie===serie;});
+    var filas=jug.map(function(p){
+      return {nombre:p.nombre,hoy:_ptsHasta(p.nombre,partidosSerie,HOY),antes:_ptsHasta(p.nombre,partidosSerie,CORTE)};
+    });
+    var ordenHoy=filas.slice().sort(function(a,b){return b.hoy-a.hoy;});
+    var ordenAntes=filas.slice().sort(function(a,b){return b.antes-a.antes;});
+    var posHoy={},posAntes={};
+    ordenHoy.forEach(function(f,i){posHoy[f.nombre]=i+1;});
+    ordenAntes.forEach(function(f,i){posAntes[f.nombre]=i+1;});
+    filas.forEach(function(f){
+      var subio=posAntes[f.nombre]-posHoy[f.nombre];
+      if(subio>0&&(!mejor||subio>mejor.subio)){
+        mejor={nombre:f.nombre,serie:serie,subio:subio};
+      }
+    });
+  });
+  return mejor;
+}
+
+function rJugadorDelMes(){
+  var el=document.getElementById('hjm');
+  if(!el)return;
+  var jm=calcularJugadorDelMes();
+  if(!jm||jm.subio<=0){el.classList.remove('show');return;}
+  document.getElementById('hjmNombre').textContent=jm.nombre;
+  document.getElementById('hjmDelta').textContent='+'+jm.subio+(jm.subio===1?' puesto':' puestos')+' - Serie '+jm.serie;
+  el.dataset.nombre=jm.nombre;
+  el.classList.add('show');
+}
+
 // Transforma el JSON de Google Sheets al formato que usa la app y
 // reemplaza DATA en el sitio (sin tocar código, solo datos en vivo).
 function transformLiveData(json){
@@ -565,6 +635,7 @@ function rHeroStats(){
   var elSs=document.getElementById("ss");if(elSs)elSs.textContent=nSeries;
   var elSr=document.getElementById("sr");if(elSr)elSr.textContent=jugados;
   var elGs=document.getElementById("gs");if(elGs)elGs.textContent="Datos reales - Escalerilla 2026 - "+activos+" jugadores activos - "+jugados+" partidos jugados";
+  rJugadorDelMes();
 }
 
 function rAll(){
