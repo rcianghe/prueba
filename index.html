@@ -40,6 +40,8 @@ section{padding:4rem 1.5rem}
 .hs{font-size:.9rem;font-weight:300;color:var(--gl);letter-spacing:2px;margin-top:.9rem;text-transform:uppercase}
 .hst{display:flex;gap:2.2rem;justify-content:center;margin-top:2.2rem;flex-wrap:wrap}
 .hsn{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--v);line-height:1}
+.heroMascot{display:block;margin:.4rem auto -.6rem;max-height:280px;width:auto;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55))}
+@media (max-width:480px){.heroMascot{max-height:220px}}
 .hsl{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gl);margin-top:2px}
 .hcta{display:flex;gap:.9rem;justify-content:center;margin-top:2.2rem;flex-wrap:wrap}
 .mprevia{margin-top:.7rem;padding:.65rem .85rem;background:rgba(212,230,10,.05);border-left:2px solid var(--am);border-radius:0 6px 6px 0;font-size:.76rem;line-height:1.45;color:var(--bl);font-style:italic}
@@ -323,6 +325,7 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
       <div><div class="hsn" id="ss">3</div><div class="hsl">Series</div></div>
       <div><div class="hsn" id="sr">148</div><div class="hsl">Jugados</div></div>
     </div>
+    <img class="heroMascot" id="heroMascotImg" alt="Ricardo Ciangherotti" style="display:none">
     <div class="hjm" id="hjm" onclick="showProfile(document.getElementById('hjm').dataset.nombre,true)">
       <span class="hjmtop"><span class="hjmi">🔥</span><span class="hjmt">Jugador del Mes</span></span>
       <span class="hjmn" id="hjmNombre"></span>
@@ -669,6 +672,8 @@ function rHeroStats(){
   var elSs=document.getElementById("ss");if(elSs)elSs.textContent=nSeries;
   var elSr=document.getElementById("sr");if(elSr)elSr.textContent=jugados;
   var elGs=document.getElementById("gs");if(elGs)elGs.textContent="Datos reales - Escalerilla 2026 - "+activos+" jugadores activos - "+jugados+" partidos jugados";
+  var elHm=document.getElementById("heroMascotImg");
+  if(elHm&&typeof RICARDO_HERO_B64!=="undefined"){elHm.src="data:image/png;base64,"+RICARDO_HERO_B64;elHm.style.display="block";}
   rJugadorDelMes();
 }
 
