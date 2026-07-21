@@ -587,6 +587,7 @@ function transformLiveData(json){
   });
 }
 
+var currentProfileName=null; // jugador actualmente mostrado en la seccion Perfil (evita que el auto-refresh lo resetee al #1 del ranking)
 var liveRefreshBusy=false;
 function loadLiveData(){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.indexOf('PEGA_AQUI')===0)return; // sin desplegar aun, se usan datos estaticos
@@ -646,10 +647,18 @@ function rHeroStats(){
 function rAll(){
   rHeroStats();
   rRanking();rMatches();rResults();rStore();populateH2H();
-  var top=null;
-  var sorted=DATA.players.slice().sort(function(a,b){return b.pts-a.pts;});
-  for(var i=0;i<sorted.length;i++){if(!sorted[i].retirado){top=sorted[i];break;}}
-  if(top)showProfile(top.nombre,false);
+  var nombreAMostrar=null;
+  if(currentProfileName){
+    // ya hay un jugador seleccionado (por el usuario o por una carga previa): lo mantenemos
+    for(var i=0;i<DATA.players.length;i++){if(DATA.players[i].nombre===currentProfileName){nombreAMostrar=currentProfileName;break;}}
+  }
+  if(!nombreAMostrar){
+    var top=null;
+    var sorted=DATA.players.slice().sort(function(a,b){return b.pts-a.pts;});
+    for(var i=0;i<sorted.length;i++){if(!sorted[i].retirado){top=sorted[i];break;}}
+    if(top)nombreAMostrar=top.nombre;
+  }
+  if(nombreAMostrar)showProfile(nombreAMostrar,false);
   var e=document.querySelectorAll(".fi2");
   for(var i=0;i<e.length;i++)OBS.observe(e[i]);
 }
@@ -787,6 +796,7 @@ function getRivalStats(nombre){
 }
 
 function showProfile(nombre,scroll){
+  currentProfileName=nombre;
   document.getElementById("psr").style.display="none";
   document.getElementById("psi").value=nombre;
   var p=null;
