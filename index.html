@@ -72,6 +72,25 @@ section{padding:4rem 1.5rem}
 .sb.B{background:rgba(46,125,209,.25);color:#5a9ee0;border:1px solid rgba(46,125,209,.4)}
 .sb.C{background:rgba(91,191,42,.25);color:var(--v);border:1px solid rgba(91,191,42,.4)}
 .tu{color:var(--v);font-size:.75rem}.td{color:var(--ro);font-size:.75rem}.tn{color:var(--gl);font-size:.75rem}
+.rchawrap{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin:.9rem 0}
+.rchab{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:.32rem .8rem;border-radius:20px;display:inline-flex;align-items:center;gap:.35rem}
+.rchab.W{background:rgba(91,191,42,.18);color:var(--v);border:1px solid rgba(91,191,42,.4)}
+.rchab.L{background:rgba(192,57,43,.18);color:#e05a4a;border:1px solid rgba(192,57,43,.4)}
+.u5{display:flex;gap:.28rem}
+.u5i{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700}
+.u5i.W{background:var(--v);color:var(--ng)}
+.u5i.L{background:var(--ro);color:var(--bl)}
+.mgcall{margin:.7rem 0;padding:.55rem .85rem;background:rgba(212,230,10,.06);border-left:2px solid var(--am);border-radius:0 6px 6px 0;font-size:.78rem;color:var(--bl)}
+.mgcall b{color:var(--am)}
+.tmpanel{margin-top:1.3rem;background:var(--g);border:1px solid var(--gm);border-radius:8px;padding:1rem 1.2rem}
+.tmpanel .rmt{margin-bottom:.6rem}
+.tmrow{display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem}
+.tmrow:last-child{border-bottom:none}
+.tmname{color:var(--bl);font-weight:600}
+.tmdetail{color:var(--gl);font-size:.72rem;margin-top:.1rem}
+.tmdiff{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--am)}
+.sparkwrap{margin:.9rem 0}
+.sparkwrap svg{width:100%;height:56px;display:block}
 .wb{display:flex;align-items:center;gap:5px}
 .wt{flex:1;height:3px;background:var(--gm);border-radius:2px;overflow:hidden}
 .wf{height:100%;background:var(--v);border-radius:2px}
@@ -320,6 +339,7 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
     </div>
     <table class="rt"><thead><tr><th>#</th><th>Jugador</th><th>Serie</th><th>Pts</th><th>PJ</th><th>PG</th><th>PP</th><th>%Win</th><th>T</th></tr></thead>
     <tbody id="rb"></tbody></table>
+    <div id="topMata"></div>
   </div>
 </section>
 
@@ -646,7 +666,7 @@ function rHeroStats(){
 
 function rAll(){
   rHeroStats();
-  rRanking();rMatches();rResults();rStore();populateH2H();
+  rRanking();rMatches();rResults();rStore();populateH2H();rTopMatagigantes();
   var nombreAMostrar=null;
   if(currentProfileName){
     // ya hay un jugador seleccionado (por el usuario o por una carga previa): lo mantenemos
@@ -834,6 +854,38 @@ function showProfile(nombre,scroll){
     }
     titH="<div class=\"tbg\"><div class=\"rmt\">Titulos obtenidos</div><div class=\"tbl\">"+chips+"</div></div>";
   }
+  // Rachas y tendencias
+  var tend=tendenciasJugador(nombre);
+  var rachaH="";
+  if(tend.rachaActual.tipo){
+    var esRachaGanadora=tend.rachaActual.tipo==='W';
+    rachaH+="<span class=\"rchab "+(esRachaGanadora?"W":"L")+"\">"+(esRachaGanadora?"\ud83d\udd25":"\u2744\ufe0f")+" "+tend.rachaActual.cantidad+" "+(esRachaGanadora?"victoria":"derrota")+(tend.rachaActual.cantidad===1?"":"s")+" seguidas</span>";
+  }
+  var u5H="";
+  if(tend.ultimosCinco.length){
+    u5H+="<div class=\"u5\">";
+    for(var iu=0;iu<tend.ultimosCinco.length;iu++){u5H+="<div class=\"u5i "+tend.ultimosCinco[iu]+"\">"+tend.ultimosCinco[iu]+"</div>";}
+    u5H+="</div>";
+  }
+  var rachaBlockH="";
+  if(rachaH||u5H)rachaBlockH="<div class=\"rchawrap\">"+rachaH+u5H+"</div>";
+  var mgCallH="";
+  if(tend.matagigantes.victoriasSorpresa>0){
+    var mejor=tend.matagigantes.detalle[0];
+    mgCallH="<div class=\"mgcall\">\ud83c\udfaf <b>Matagigantes:</b> "+tend.matagigantes.victoriasSorpresa+" victoria(s) contra rivales mejor ubicados esta temporada - la mas destacada, contra "+mejor.rival+" (Serie "+mejor.serie+")</div>";
+  }
+  // Evolucion del ranking (sparkline)
+  var evolucion=evolucionJugador(nombre);
+  var sparkH="";
+  if(evolucion.length>1){
+    var primero=evolucion[0].posicion,ultimo=evolucion[evolucion.length-1].posicion;
+    var deltaTxt="";
+    if(primero!=null&&ultimo!=null&&primero!==ultimo){
+      var subio=primero-ultimo;
+      deltaTxt=subio>0?(" - subio "+subio+(subio===1?" puesto":" puestos")+" en la temporada"):(" - bajo "+Math.abs(subio)+(Math.abs(subio)===1?" puesto":" puestos")+" en la temporada");
+    }
+    sparkH="<div class=\"sparkwrap\"><div class=\"rmt\">Evolucion de puntos"+deltaTxt+"</div>"+sparklineSVG(evolucion,300,56)+"</div>";
+  }
   document.getElementById("pcc").innerHTML=
     "<div class=\"ppc\"><div class=\"phero\"><div class=\"pav\">"+ini+"</div>"
     +"<div class=\"pin\"><h2>"+p.nombre+"</h2><p>Ranking #"+rp+" general - Serie "+p.serie+" #"+sp+"</p>"
@@ -842,7 +894,9 @@ function showProfile(nombre,scroll){
     +"<div class=\"psi2\"><div class=\"psn\">"+p.pg+"</div><div class=\"psl\">Victorias</div></div>"
     +"<div class=\"psi2\"><div class=\"psn\">"+p.pp+"</div><div class=\"psl\">Derrotas</div></div>"
     +"<div class=\"psi2\"><div class=\"psn\">"+wr+"%</div><div class=\"psl\">%Win</div></div></div>"
+    +rachaBlockH+mgCallH
     +titH
+    +sparkH
     +"<div class=\"rvg\"><div class=\"rvc fav\"><div class=\"rvl\">Rival favorito</div>"+favH+"</div>"
     +"<div class=\"rvc dif\"><div class=\"rvl\">Rival mas dificil</div>"+difH+"</div></div>"
     +"<div class=\"rm\"><div class=\"rmt\">Ultimos resultados</div>"+rH+"</div></div>";
@@ -891,6 +945,167 @@ function hashStr(s){
   return Math.abs(h);
 }
 function pick(arr,seed){return arr[seed%arr.length];}
+
+// ============================================================
+// MOTOR DE RACHAS Y TENDENCIAS
+// ============================================================
+// Historial cronologico por jugador: {nombre: [{resultado:'W'/'L', rival, fecha, serie, wo}]}
+// Excluye partidos donde cualquiera de los dos este marcado retirado.
+function construirHistorialPorJugador(){
+  var retiradoSet={};
+  for(var i=0;i<DATA.players.length;i++){if(DATA.players[i].retirado)retiradoSet[DATA.players[i].nombre]=true;}
+  var validos=[];
+  for(var i=0;i<DATA.results.length;i++){
+    var r=DATA.results[i];
+    if(r.ganador&&r.perdedor&&!retiradoSet[r.ganador]&&!retiradoSet[r.perdedor])validos.push(r);
+  }
+  validos.sort(function(a,b){return parseFechaDDMMYYYY(a.fecha)-parseFechaDDMMYYYY(b.fecha);});
+  var historial={};
+  for(var i=0;i<validos.length;i++){
+    var r=validos[i],wo=r.score==='W.O.';
+    if(!historial[r.ganador])historial[r.ganador]=[];
+    if(!historial[r.perdedor])historial[r.perdedor]=[];
+    historial[r.ganador].push({resultado:'W',rival:r.perdedor,fecha:r.fecha,serie:r.serie,wo:wo});
+    historial[r.perdedor].push({resultado:'L',rival:r.ganador,fecha:r.fecha,serie:r.serie,wo:wo});
+  }
+  return historial;
+}
+function calcularRachaActual(h){
+  if(!h||h.length===0)return {tipo:null,cantidad:0};
+  var tipo=h[h.length-1].resultado,cantidad=0;
+  for(var i=h.length-1;i>=0;i--){if(h[i].resultado===tipo)cantidad++;else break;}
+  return {tipo:tipo,cantidad:cantidad};
+}
+function ultimosN(h,n){
+  if(!h)return [];
+  return h.slice(-(n||5)).map(function(p){return p.resultado;});
+}
+// {nombre: posicion en su serie} usando pts actuales, excluye retirados.
+function rankingPorSerieDesdeDATA(){
+  var porSerie={A:[],B:[],C:[]};
+  for(var i=0;i<DATA.players.length;i++){var p=DATA.players[i];if(!p.retirado&&porSerie[p.serie])porSerie[p.serie].push(p);}
+  var pos={};
+  ['A','B','C'].forEach(function(serie){
+    var ord=porSerie[serie].slice().sort(function(a,b){return b.pts-a.pts;});
+    ord.forEach(function(p,i){pos[p.nombre]=i+1;});
+  });
+  return pos;
+}
+// Indice de "matagigantes": victorias contra rivales mejor posicionados (usa ranking actual como proxy).
+function calcularIndiceMatagigantes(historialTodos,rankingPorSerie){
+  var resultado={};
+  for(var jugador in historialTodos){
+    var miRanking=rankingPorSerie[jugador];
+    if(miRanking==null)continue;
+    var sorpresas=[];
+    var h=historialTodos[jugador];
+    for(var i=0;i<h.length;i++){
+      var partido=h[i];
+      if(partido.resultado!=='W'||partido.wo)continue;
+      var rankingRival=rankingPorSerie[partido.rival];
+      if(rankingRival==null)continue;
+      if(rankingRival<miRanking)sorpresas.push({rival:partido.rival,diferencial:miRanking-rankingRival,fecha:partido.fecha,serie:partido.serie});
+    }
+    if(sorpresas.length>0){
+      sorpresas.sort(function(a,b){return b.diferencial-a.diferencial;});
+      var diferencialTotal=0;for(var i=0;i<sorpresas.length;i++)diferencialTotal+=sorpresas[i].diferencial;
+      resultado[jugador]={victoriasSorpresa:sorpresas.length,diferencialTotal:diferencialTotal,detalle:sorpresas};
+    }
+  }
+  return resultado;
+}
+function tablaMatagigantes(n){
+  var historial=construirHistorialPorJugador();
+  var rankingPorSerie=rankingPorSerieDesdeDATA();
+  var indice=calcularIndiceMatagigantes(historial,rankingPorSerie);
+  var lista=[];
+  for(var jugador in indice){var d=indice[jugador];lista.push({jugador:jugador,victoriasSorpresa:d.victoriasSorpresa,diferencialTotal:d.diferencialTotal,detalle:d.detalle});}
+  lista.sort(function(a,b){return b.diferencialTotal-a.diferencialTotal;});
+  return lista.slice(0,n||5);
+}
+// Paquete de tendencias para un jugador puntual (usado en showProfile).
+function tendenciasJugador(nombre){
+  var historialTodos=construirHistorialPorJugador();
+  var h=historialTodos[nombre]||[];
+  var racha=calcularRachaActual(h);
+  var ultimos5=ultimosN(h,5);
+  var rankingPorSerie=rankingPorSerieDesdeDATA();
+  var indice=calcularIndiceMatagigantes(historialTodos,rankingPorSerie);
+  var matagigantes=indice[nombre]||{victoriasSorpresa:0,diferencialTotal:0,detalle:[]};
+  return {rachaActual:racha,ultimosCinco:ultimos5,matagigantes:matagigantes};
+}
+
+// ============================================================
+// EVOLUCION DEL RANKING POR SEMANA
+// ============================================================
+// Extiende _ptsHasta()/calcularJugadorDelMes() (arriba) para reconstruir
+// la curva completa de puntos/posicion de un jugador a lo largo de la
+// temporada, semana a semana, recalculando desde DATA.results (sin
+// necesitar snapshots guardados). Usa solo puntos base, igual que
+// calcularJugadorDelMes(), por lo que es consistente con "Jugador del Mes".
+function generarCortesSemanales(){
+  if(!DATA.results.length)return [];
+  var fechas=DATA.results.map(function(r){return parseFechaDDMMYYYY(r.fecha);});
+  var inicio=Math.min.apply(null,fechas);
+  var fin=Math.max(Math.max.apply(null,fechas),Date.now());
+  var UNA_SEMANA=7*24*60*60*1000;
+  var cortes=[],t=inicio;
+  while(t<=fin){cortes.push(t);t+=UNA_SEMANA;}
+  if(cortes[cortes.length-1]<fin)cortes.push(fin);
+  return cortes;
+}
+function evolucionJugador(nombre){
+  var jugador=null;
+  for(var i=0;i<DATA.players.length;i++){if(DATA.players[i].nombre===nombre){jugador=DATA.players[i];break;}}
+  if(!jugador)return [];
+  var serie=jugador.serie;
+  var companeros=DATA.players.filter(function(p){return p.serie===serie&&!p.retirado;});
+  var partidosSerie=DATA.results.filter(function(r){return r.serie===serie;});
+  var cortes=generarCortesSemanales();
+  return cortes.map(function(corteTs){
+    var filas=companeros.map(function(p){return {nombre:p.nombre,pts:_ptsHasta(p.nombre,partidosSerie,corteTs)};});
+    filas.sort(function(a,b){return b.pts-a.pts;});
+    var posicion=null,pts=0;
+    for(var i=0;i<filas.length;i++){if(filas[i].nombre===nombre){posicion=i+1;pts=filas[i].pts;break;}}
+    return {fecha:corteTs,pts:pts,posicion:posicion};
+  });
+}
+// Genera un mini sparkline SVG (puntos a lo largo de la temporada) para
+// insertar directo en el perfil. w/h en px.
+function sparklineSVG(evolucion,w,h){
+  w=w||300;h=h||56;
+  if(!evolucion||evolucion.length<2)return '';
+  var vals=evolucion.map(function(e){return e.pts;});
+  var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals);
+  var rango=(max-min)||1;
+  var pad=4;
+  var pts=evolucion.map(function(e,i){
+    var x=pad+(i/(evolucion.length-1))*(w-2*pad);
+    var y=h-pad-((e.pts-min)/rango)*(h-2*pad);
+    return x.toFixed(1)+','+y.toFixed(1);
+  });
+  var last=evolucion[evolucion.length-1];
+  var lastX=(w-pad).toFixed(1),lastY=(h-pad-((last.pts-min)/rango)*(h-2*pad)).toFixed(1);
+  return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">'
+    +'<polyline points="'+pts.join(' ')+'" fill="none" stroke="#5BBF2A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<circle cx="'+lastX+'" cy="'+lastY+'" r="3.5" fill="#D4E60A"/>'
+    +'</svg>';
+}
+function rTopMatagigantes(){
+  var el=document.getElementById('topMata');
+  if(!el)return;
+  var top=tablaMatagigantes(5);
+  if(!top.length){el.innerHTML='';return;}
+  var rows='';
+  for(var i=0;i<top.length;i++){
+    var t=top[i];
+    var mejorRival=t.detalle[0];
+    rows+='<div class="tmrow"><div><div class="tmname">'+(i+1)+'. '+t.jugador+'</div>'
+      +'<div class="tmdetail">'+t.victoriasSorpresa+' victoria(s) sorpresa - mejor: vs '+mejorRival.rival+' (Serie '+mejorRival.serie+')</div></div>'
+      +'<div class="tmdiff">+'+t.diferencialTotal+'</div></div>';
+  }
+  el.innerHTML='<div class="tmpanel"><div class="rmt">Matagigantes de la Temporada</div>'+rows+'</div>';
+}
 
 function generarPrevia(p1,p2,serie){
   var rk1=rankEnSerie(p1),rk2=rankEnSerie(p2);
