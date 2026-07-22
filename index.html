@@ -10,12 +10,12 @@
 <meta property="og:site_name" content="Club de Tenis Estadio Quilicura">
 <meta property="og:title" content="Club de Tenis Estadio Quilicura - Escalerilla 2026">
 <meta property="og:description" content="Ranking en vivo, resultados y estadisticas de la Escalerilla por Series 2026. Series A, B y C.">
-<meta property="og:image" content="https://rcianghe.github.io/logo-club-tenis-estadio-quilicura.jpg">
-<meta property="og:url" content="https://rcianghe.github.io/">
+<meta property="og:image" content="https://rcianghe.github.io/atp-Ciangherotti/logo-club-tenis-estadio-quilicura.jpg">
+<meta property="og:url" content="https://rcianghe.github.io/atp-Ciangherotti/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Club de Tenis Estadio Quilicura - Escalerilla 2026">
 <meta name="twitter:description" content="Ranking en vivo, resultados y estadisticas de la Escalerilla por Series 2026.">
-<meta name="twitter:image" content="https://rcianghe.github.io/logo-club-tenis-estadio-quilicura.jpg">
+<meta name="twitter:image" content="https://rcianghe.github.io/atp-Ciangherotti/logo-club-tenis-estadio-quilicura.jpg">
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0e0e0e">
@@ -480,7 +480,7 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
     <a href="#perfil">Jugadores</a><a href="#estadisticas">H2H</a><a href="#galeria">Galeria</a><a href="#tienda">Tienda</a>
   </div>
   <div class="fc">Club de Tenis Estadio Quilicura 2026 v3.0</div>
-  <div class="fvc"><img src="https://hits.sh/rcianghe.github.io.svg?label=visitas&color=5bbf2a&labelColor=1a1a1a&style=flat-square" alt="Contador de visitas" loading="lazy"></div>
+  <div class="fvc"><img src="https://hits.sh/rcianghe.github.io/atp-Ciangherotti.svg?label=visitas&color=5bbf2a&labelColor=1a1a1a&style=flat-square" alt="Contador de visitas" loading="lazy"></div>
 </footer>
 
 <nav class="mn">
@@ -585,46 +585,47 @@ function _ptsHasta(nombre,partidosSerie,fechaCorte){
   return pts;
 }
 
-// "Jugador del Mes": compara el puesto de cada jugador activo en su Serie
-// hace 30 dias vs hoy (usando solo puntaje base, sin bonos), y destaca al
-// que mas puestos escalo. Se recalcula con los datos ya cargados en DATA,
-// asi que funciona tanto con la data estatica como con la que llega de
-// Google Sheets via transformLiveData.
+// "Jugador Destacado": el jugador activo con la racha de victorias
+// consecutivas mas larga vigente (usa el mismo motor de rachas del
+// perfil). Empate se resuelve por puntaje actual. Si nadie tiene
+// racha, no destaca a nadie.
 function calcularJugadorDelMes(){
-  var HOY=Date.now();
-  var CORTE=HOY-30*24*60*60*1000;
-  var porSerie={A:[],B:[],C:[]};
-  DATA.players.forEach(function(p){if(porSerie[p.serie]&&!p.retirado)porSerie[p.serie].push(p);});
+  var historialTodos=construirHistorialPorJugador();
   var mejor=null;
-  ['A','B','C'].forEach(function(serie){
-    var jug=porSerie[serie];
-    if(jug.length<2)return;
-    var partidosSerie=DATA.results.filter(function(r){return r.serie===serie;});
-    var filas=jug.map(function(p){
-      return {nombre:p.nombre,hoy:_ptsHasta(p.nombre,partidosSerie,HOY),antes:_ptsHasta(p.nombre,partidosSerie,CORTE)};
-    });
-    var ordenHoy=filas.slice().sort(function(a,b){return b.hoy-a.hoy;});
-    var ordenAntes=filas.slice().sort(function(a,b){return b.antes-a.antes;});
-    var posHoy={},posAntes={};
-    ordenHoy.forEach(function(f,i){posHoy[f.nombre]=i+1;});
-    ordenAntes.forEach(function(f,i){posAntes[f.nombre]=i+1;});
-    filas.forEach(function(f){
-      var subio=posAntes[f.nombre]-posHoy[f.nombre];
-      if(subio>0&&(!mejor||subio>mejor.subio)){
-        mejor={nombre:f.nombre,serie:serie,subio:subio};
-      }
-    });
-  });
+  for(var jugador in historialTodos){
+    var pJugador=null;
+    for(var i=0;i<DATA.players.length;i++){if(DATA.players[i].nombre===jugador){pJugador=DATA.players[i];break;}}
+    if(!pJugador||pJugador.retirado)continue;
+    var racha=calcularRachaActual(historialTodos[jugador]);
+    if(racha.tipo!=='W'||racha.cantidad<1)continue;
+    if(!mejor||racha.cantidad>mejor.cantidad||(racha.cantidad===mejor.cantidad&&pJugador.pts>mejor.pts)){
+      mejor={nombre:jugador,serie:pJugador.serie,cantidad:racha.cantidad};
+    }
+  }
   return mejor;
+}
+
+var FRASES_DESTACADO=[
+  "En racha imparable",
+  "Nadie lo para",
+  "Puro fuego en cancha",
+  "Encendido esta semana",
+  "Subiendo como la espuma",
+  "A puro nervio de acero",
+  "El mas caliente del momento",
+  "Con hambre de mas"
+];
+function fraseDestacado(nombre){
+  return pick(FRASES_DESTACADO,_seedDesdeNombre(nombre));
 }
 
 function rJugadorDelMes(){
   var el=document.getElementById('hjm');
   if(!el)return;
   var jm=calcularJugadorDelMes();
-  if(!jm||jm.subio<=0){el.classList.remove('show');return;}
+  if(!jm){el.classList.remove('show');return;}
   document.getElementById('hjmNombre').textContent=jm.nombre;
-  document.getElementById('hjmDelta').textContent='+'+jm.subio+(jm.subio===1?' puesto':' puestos')+' - Serie '+jm.serie;
+  document.getElementById('hjmDelta').textContent=fraseDestacado(jm.nombre)+' - '+jm.cantidad+(jm.cantidad===1?' victoria seguida':' victorias seguidas')+' - Serie '+jm.serie;
   el.dataset.nombre=jm.nombre;
   el.classList.add('show');
 }
