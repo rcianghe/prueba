@@ -4,6 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>Club de Tenis Estadio Quilicura 2026</title>
+<meta name="description" content="Ranking en vivo de la Escalerilla por Series 2026 del Club de Tenis Estadio Quilicura. Jugadores, resultados, partidos pendientes y estadisticas de las Series A, B y C.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Club de Tenis Estadio Quilicura">
+<meta property="og:title" content="Club de Tenis Estadio Quilicura - Escalerilla 2026">
+<meta property="og:description" content="Ranking en vivo, resultados y estadisticas de la Escalerilla por Series 2026. Series A, B y C.">
+<meta property="og:image" content="https://rcianghe.github.io/logo-club-tenis-estadio-quilicura.jpg">
+<meta property="og:url" content="https://rcianghe.github.io/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Club de Tenis Estadio Quilicura - Escalerilla 2026">
+<meta name="twitter:description" content="Ranking en vivo, resultados y estadisticas de la Escalerilla por Series 2026.">
+<meta name="twitter:image" content="https://rcianghe.github.io/logo-club-tenis-estadio-quilicura.jpg">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e0e0e">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CTQ Escalerilla">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--v:#5BBF2A;--vd:#3d8a1a;--vl:#7ed44a;--am:#D4E60A;--az:#2E7DD1;--ro:#C0392B;--ng:#0e0e0e;--gd:#1a1a1a;--g:#2a2a2a;--gm:#3a3a3a;--gl:#888;--bl:#f5f5f0}
@@ -104,12 +123,21 @@ section{padding:4rem 1.5rem}
 .mgcall{margin:.7rem 0;padding:.55rem .85rem;background:rgba(212,230,10,.06);border-left:2px solid var(--am);border-radius:0 6px 6px 0;font-size:.78rem;color:var(--bl)}
 .mgcall b{color:var(--am)}
 .tmpanel{margin-top:1.3rem;background:var(--g);border:1px solid var(--gm);border-radius:8px;padding:1rem 1.2rem}
-.tmpanel .rmt{margin-bottom:.6rem}
+.tmpanel .rmt{margin-bottom:.2rem}
+.tmsub{color:var(--gl);font-size:.72rem;margin-bottom:.9rem}
+.tmempty{color:var(--gl);font-size:.82rem;font-style:italic;padding:.4rem 0}
 .tmrow{display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem}
 .tmrow:last-child{border-bottom:none}
 .tmname{color:var(--bl);font-weight:600}
 .tmdetail{color:var(--gl);font-size:.72rem;margin-top:.1rem}
 .tmdiff{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--am)}
+.tmcard{flex-direction:column;align-items:flex-start;gap:.35rem;padding:.9rem 0;position:relative}
+.tmbadge{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ng);background:var(--am);padding:.22rem .6rem;border-radius:20px}
+.tmcard .tmname{font-size:.95rem}
+.tmvs{color:var(--gl);font-weight:400;font-size:.75rem}
+.tmserie{color:var(--gl);font-weight:400;font-size:.75rem}
+.tmflavor{color:var(--gl);font-size:.8rem;line-height:1.4;max-width:calc(100% - 70px)}
+.tmscorebadge{position:absolute;top:.9rem;right:0;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--v)}
 .sparkwrap{margin:.9rem 0}
 .sparkwrap svg{width:100%;height:56px;display:block}
 .wb{display:flex;align-items:center;gap:5px}
@@ -284,6 +312,8 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
 .fls a{font-size:.75rem;color:var(--gl);text-decoration:none;transition:color .2s}
 .fls a:hover{color:var(--v)}
 .fc{margin-top:1.1rem;font-size:.62rem;color:rgba(255,255,255,.18)}
+.fvc{margin-top:.6rem;opacity:.6}
+.fvc img{height:18px;vertical-align:middle}
 .fi2{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
 .fi2.visible{opacity:1;transform:translateY(0)}
 .mn{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(14,14,14,.97);border-top:1px solid var(--v);padding:.38rem .15rem;z-index:100;grid-template-columns:repeat(7,1fr);gap:.08rem}
@@ -450,6 +480,7 @@ footer{background:var(--ng);border-top:2px solid var(--v);padding:1.8rem 1.5rem;
     <a href="#perfil">Jugadores</a><a href="#estadisticas">H2H</a><a href="#galeria">Galeria</a><a href="#tienda">Tienda</a>
   </div>
   <div class="fc">Club de Tenis Estadio Quilicura 2026 v3.0</div>
+  <div class="fvc"><img src="https://hits.sh/rcianghe.github.io.svg?label=visitas&color=5bbf2a&labelColor=1a1a1a&style=flat-square" alt="Contador de visitas" loading="lazy"></div>
 </footer>
 
 <nav class="mn">
@@ -1002,8 +1033,8 @@ function construirHistorialPorJugador(){
     var r=validos[i],wo=r.score==='W.O.';
     if(!historial[r.ganador])historial[r.ganador]=[];
     if(!historial[r.perdedor])historial[r.perdedor]=[];
-    historial[r.ganador].push({resultado:'W',rival:r.perdedor,fecha:r.fecha,serie:r.serie,wo:wo});
-    historial[r.perdedor].push({resultado:'L',rival:r.ganador,fecha:r.fecha,serie:r.serie,wo:wo});
+    historial[r.ganador].push({resultado:'W',rival:r.perdedor,fecha:r.fecha,serie:r.serie,wo:wo,score:r.score});
+    historial[r.perdedor].push({resultado:'L',rival:r.ganador,fecha:r.fecha,serie:r.serie,wo:wo,score:r.score});
   }
   return historial;
 }
@@ -1051,14 +1082,63 @@ function calcularIndiceMatagigantes(historialTodos,rankingPorSerie){
   }
   return resultado;
 }
-function tablaMatagigantes(n){
+// "Cazadores del Uno": jugadores que le ganaron EN CANCHA (no por W.O.) al
+// Nro 1 actual de su propia serie. Usa el ranking actual como proxy del
+// Nro 1 "vigente" (misma limitacion de siempre: no es el Nro 1 al momento
+// exacto del partido, sino el lider de hoy).
+function cazadoresDelUno(){
   var historial=construirHistorialPorJugador();
   var rankingPorSerie=rankingPorSerieDesdeDATA();
-  var indice=calcularIndiceMatagigantes(historial,rankingPorSerie);
-  var lista=[];
-  for(var jugador in indice){var d=indice[jugador];lista.push({jugador:jugador,victoriasSorpresa:d.victoriasSorpresa,diferencialTotal:d.diferencialTotal,detalle:d.detalle});}
-  lista.sort(function(a,b){return b.diferencialTotal-a.diferencialTotal;});
-  return lista.slice(0,n||5);
+
+  var n1PorSerie={};
+  for(var i=0;i<DATA.players.length;i++){
+    var p=DATA.players[i];
+    if(rankingPorSerie[p.nombre]===1)n1PorSerie[p.serie]=p.nombre;
+  }
+
+  var hazanas=[];
+  for(var jugador in historial){
+    var h=historial[jugador];
+    for(var i=0;i<h.length;i++){
+      var partido=h[i];
+      if(partido.resultado!=='W'||partido.wo)continue;
+      var n1=n1PorSerie[partido.serie];
+      if(n1&&partido.rival===n1&&jugador!==n1){
+        hazanas.push({jugador:jugador,rival:n1,serie:partido.serie,fecha:partido.fecha,score:partido.score});
+      }
+    }
+  }
+  hazanas.sort(function(a,b){return parseFechaDDMMYYYY(b.fecha)-parseFechaDDMMYYYY(a.fecha);});
+  return hazanas;
+}
+
+var TITULOS_CAZADOR=["Verdugo del Rey","Regicidio en la Serie","El dia que cayo el Rey","Cazador de Gigantes","Golpe al trono"];
+var FRASES_CAZADOR=[
+  "{jugador} bajo del trono a {rival}, el Nro 1 de la Serie {serie}, con un {score} que nadie vio venir.",
+  "Nadie le aviso a {rival} que {jugador} venia con hambre - {score} y la Serie {serie} quedo temblando.",
+  "El {fechaTxt}, {jugador} le recordo a {rival} que ningun trono es eterno: {score}.",
+  "Contra todo pronostico, {jugador} supero al Nro 1 de la Serie {serie} ({score}) y se gano un lugar en la leyenda de la escalerilla.",
+  "{rival} llegaba invicto en su cabeza. {jugador} penso distinto: {score}, y el Nro 1 volvio a la tierra."
+];
+function _seedDesdeNombre(nombre){
+  var s=0;for(var i=0;i<nombre.length;i++)s+=nombre.charCodeAt(i);
+  return s;
+}
+function _fechaLegible(ddmmaaaa){
+  var p=ddmmaaaa.split('-');
+  var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return p[0]+' de '+meses[Number(p[1])-1];
+}
+function textoCazador(h){
+  var seed=_seedDesdeNombre(h.jugador+h.rival);
+  var titulo=pick(TITULOS_CAZADOR,seed);
+  var frase=pick(FRASES_CAZADOR,seed+1)
+    .replace('{jugador}',h.jugador)
+    .replace('{rival}',h.rival)
+    .replace('{serie}',h.serie)
+    .replace('{score}',h.score)
+    .replace('{fechaTxt}',_fechaLegible(h.fecha));
+  return {titulo:titulo,frase:frase};
 }
 // Paquete de tendencias para un jugador puntual (usado en showProfile).
 function tendenciasJugador(nombre){
@@ -1131,17 +1211,23 @@ function sparklineSVG(evolucion,w,h){
 function rTopMatagigantes(){
   var el=document.getElementById('topMata');
   if(!el)return;
-  var top=tablaMatagigantes(5);
-  if(!top.length){el.innerHTML='';return;}
-  var rows='';
-  for(var i=0;i<top.length;i++){
-    var t=top[i];
-    var mejorRival=t.detalle[0];
-    rows+='<div class="tmrow"><div><div class="tmname">'+(i+1)+'. '+t.jugador+'</div>'
-      +'<div class="tmdetail">'+t.victoriasSorpresa+' victoria(s) sorpresa - mejor: vs '+mejorRival.rival+' (Serie '+mejorRival.serie+')</div></div>'
-      +'<div class="tmdiff">+'+t.diferencialTotal+'</div></div>';
+  var hazanas=cazadoresDelUno();
+  if(!hazanas.length){
+    el.innerHTML='<div class="tmpanel"><div class="rmt">Matagigantes de la Temporada</div>'
+      +'<div class="tmempty">Por ahora, los Nro 1 de cada serie siguen invictos frente al resto. Nadie se ha atrevido todavia a tocarles la corona. Quien sera el primero?</div></div>';
+    return;
   }
-  el.innerHTML='<div class="tmpanel"><div class="rmt">Matagigantes de la Temporada</div>'+rows+'</div>';
+  var rows='';
+  for(var i=0;i<hazanas.length;i++){
+    var h=hazanas[i],t=textoCazador(h);
+    rows+='<div class="tmrow tmcard"><div class="tmbadge">'+t.titulo+'</div>'
+      +'<div class="tmname">'+h.jugador+' <span class="tmvs">vs</span> '+h.rival+' <span class="tmserie">(Serie '+h.serie+')</span></div>'
+      +'<div class="tmflavor">'+t.frase+'</div>'
+      +'<div class="tmscorebadge">'+h.score+'</div></div>';
+  }
+  el.innerHTML='<div class="tmpanel"><div class="rmt">Matagigantes de la Temporada</div>'
+    +'<div class="tmsub">Jugadores que le ganaron, en cancha, al Nro 1 vigente de su serie</div>'
+    +rows+'</div>';
 }
 
 function generarPrevia(p1,p2,serie){
